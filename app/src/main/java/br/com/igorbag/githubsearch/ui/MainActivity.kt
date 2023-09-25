@@ -11,6 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import br.com.igorbag.githubsearch.R
 import br.com.igorbag.githubsearch.data.GitHubService
 import br.com.igorbag.githubsearch.domain.Repository
+import br.com.igorbag.githubsearch.ui.adapter.RepositoryAdapter
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -20,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var btnConfirmar: Button
     lateinit var listaRepositories: RecyclerView
     lateinit var githubApi: GitHubService
+    lateinit var repositoryAdapter: RepositoryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,12 +98,15 @@ class MainActivity : AppCompatActivity() {
     //Metodo responsavel por buscar todos os repositorios do usuario fornecido
     fun getAllReposByUserName() {
         // TODO 6 - realizar a implementacao do callback do retrofit e chamar o metodo setupAdapter se retornar os dados com sucesso
+        val sharedPref = this.getPreferences(MODE_PRIVATE)
+        val userName = sharedPref.getString(getString(R.string.saved_user_name), "")
+
         try {
-            val call = githubApi.getAllRepositoriesByUser(nomeUsuario.text.toString())
-            call.enqueue(object : retrofit2.Callback<List<Repository>> {
+            val call = githubApi.getAllRepositoriesByUser(userName!!)
+            call.enqueue(object : Callback<List<Repository>> {
                 override fun onResponse(
-                    call: retrofit2.Call<List<Repository>>,
-                    response: retrofit2.Response<List<Repository>>
+                    call: Call<List<Repository>>,
+                    response: Response<List<Repository>>
                 ) {
                     if (response.isSuccessful) {
                         val repositories = response.body()
@@ -106,7 +114,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                override fun onFailure(call: retrofit2.Call<List<Repository>>, t: Throwable) {
+                override fun onFailure(call: Call<List<Repository>>, t: Throwable) {
                     Toast.makeText(
                         this@MainActivity,
                         "Erro ao buscar os repositorios",
@@ -135,6 +143,16 @@ class MainActivity : AppCompatActivity() {
             @TODO 7 - Implementar a configuracao do Adapter , construir o adapter e instancia-lo
             passando a listagem dos repositorios
          */
+        repositoryAdapter = RepositoryAdapter(list)
+        listaRepositories.adapter = repositoryAdapter
+
+        repositoryAdapter.repositoryItemLister = {
+            openBrowser(it.htmlUrl)
+        }
+
+        repositoryAdapter.btnShareLister = {
+            shareRepositoryLink(it.htmlUrl)
+        }
     }
 
 
