@@ -93,6 +93,40 @@ class MainActivity : AppCompatActivity() {
     //Metodo responsavel por buscar todos os repositorios do usuario fornecido
     fun getAllReposByUserName() {
         // TODO 6 - realizar a implementacao do callback do retrofit e chamar o metodo setupAdapter se retornar os dados com sucesso
+        try {
+            val call = githubApi.getAllRepositoriesByUser(nomeUsuario.text.toString())
+            call.enqueue(object : retrofit2.Callback<List<Repository>> {
+                override fun onResponse(
+                    call: retrofit2.Call<List<Repository>>,
+                    response: retrofit2.Response<List<Repository>>
+                ) {
+                    if (response.isSuccessful) {
+                        val repositories = response.body()
+                        setupAdapter(repositories!!)
+                    }
+                }
+
+                override fun onFailure(call: retrofit2.Call<List<Repository>>, t: Throwable) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Erro ao buscar os repositorios",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            })
+        } catch (e: Exception) {
+            Toast.makeText(
+                this@MainActivity,
+                "Erro ao buscar os repositorios",
+                Toast.LENGTH_LONG
+            ).show()
+        } finally {
+            Toast.makeText(
+                this@MainActivity,
+                "Busca finalizada",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     // Metodo responsavel por realizar a configuracao do adapter
