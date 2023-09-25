@@ -46,15 +46,20 @@ class MainActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG
             )
                 .show()
-            saveUserLocal()
+            saveUserLocal(nomeUsuario.text.toString())
             getAllReposByUserName()
         }
     }
 
 
     // salvar o usuario preenchido no EditText utilizando uma SharedPreferences
-    private fun saveUserLocal() {
+    private fun saveUserLocal(userName: String) {
         //@TODO 3 - Persistir o usuario preenchido na editText com a SharedPref no listener do botao salvar
+        val sharedPref = this.getPreferences(MODE_PRIVATE) ?: return
+        with(sharedPref.edit()) {
+            putString(getString(R.string.saved_user_name), userName)
+            apply()
+        }
     }
 
     private fun showUserName() {
