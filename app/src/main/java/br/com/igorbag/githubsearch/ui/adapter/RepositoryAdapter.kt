@@ -1,16 +1,21 @@
 package br.com.igorbag.githubsearch.ui.adapter
 
+import android.media.Image
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.igorbag.githubsearch.R
 import br.com.igorbag.githubsearch.domain.Repository
+import org.w3c.dom.Text
 
 class RepositoryAdapter(private val repositories: List<Repository>) :
     RecyclerView.Adapter<RepositoryAdapter.ViewHolder>() {
 
-    var carItemLister: (Repository) -> Unit = {}
+    var repositoryItemLister: (Repository) -> Unit = {}
     var btnShareLister: (Repository) -> Unit = {}
 
     // Cria uma nova view
@@ -35,11 +40,20 @@ class RepositoryAdapter(private val repositories: List<Repository>) :
         //holder.favorito.setOnClickListener {
         //    btnShareLister(repositores[position])
         //}
+        holder.nameRepository.text = repositories[position].name
+
+        holder.itemView.setOnClickListener {
+            repositoryItemLister(repositories[position])
+        }
+
+        holder.imageShare.setOnClickListener {
+            btnShareLister(repositories[position])
+        }
     }
 
     // Pega a quantidade de repositorios da lista
     //@TODO 9 - realizar a contagem da lista
-    override fun getItemCount(): Int = 0
+    override fun getItemCount(): Int = repositories.size
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         //@TODO 10 - Implementar o ViewHolder para os repositorios
@@ -51,6 +65,17 @@ class RepositoryAdapter(private val repositories: List<Repository>) :
         //        atributo = findViewById(R.id.item_view)
         //    }
 
+        val card: CardView
+        val nameRepository: TextView
+        val imageShare: ImageView
+
+        init {
+            view.apply {
+                card = findViewById(R.id.cv_car)
+                nameRepository = findViewById(R.id.tv_preco)
+                imageShare = findViewById(R.id.iv_favorite)
+            }
+        }
     }
 }
 
