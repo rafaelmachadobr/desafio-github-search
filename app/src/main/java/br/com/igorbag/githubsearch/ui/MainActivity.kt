@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import br.com.igorbag.githubsearch.R
@@ -22,9 +23,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupView()
+        setupListeners()
         showUserName()
         setupRetrofit()
-        getAllReposByUserName()
     }
 
     // Metodo responsavel por realizar o setup da view e recuperar os Ids do layout
@@ -38,6 +39,16 @@ class MainActivity : AppCompatActivity() {
     //metodo responsavel por configurar os listeners click da tela
     private fun setupListeners() {
         //@TODO 2 - colocar a acao de click do botao confirmar
+        btnConfirmar.setOnClickListener {
+            Toast.makeText(
+                this,
+                "Procurando repositórios de ${nomeUsuario.text}",
+                Toast.LENGTH_LONG
+            )
+                .show()
+            saveUserLocal()
+            getAllReposByUserName()
+        }
     }
 
 
